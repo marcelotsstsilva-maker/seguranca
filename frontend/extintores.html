@@ -6,25 +6,19 @@
   <title>Controle de Extintores</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-<style>
-  body { background-color: #f4f6f9; font-family: Arial, sans-serif; margin: 0; }
-  .header { background-color: #007bff; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-  .logo-container { width: 70px; height: 70px; background: #f8f9fa; border-radius: 10%; display: flex; align-items: center; justify-content: center; margin-right: 10px; }
-  .logo-container img { max-width: 90%; max-height: 90%; object-fit: contain; }
-  .system-title { background: #007bff; color: white; text-align: center; padding: 10px 0; font-size: 24px; font-weight: bold; }
-  .muted-cell { color: #6c757d; opacity: 0.65; }
-  .small-input { max-width: 120px; }
-
-  /* 👇 Centraliza apenas a coluna "Próx. Recarga" (6ª da tabela) */
-  td:nth-child(6), th:nth-child(6) {
-    text-align: center;
-  }
-</style>
-
+  <style>
+    body { background-color: #f4f6f9; font-family: Arial, sans-serif; margin: 0; }
+    .header { background-color: #007bff; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .logo-container { width: 70px; height: 70px; background: #f8f9fa; border-radius: 10%; display: flex; align-items: center; justify-content: center; margin-right: 10px; }
+    .logo-container img { max-width: 90%; max-height: 90%; object-fit: contain; }
+    .system-title { background: #007bff; color: white; text-align: center; padding: 10px 0; font-size: 24px; font-weight: bold; }
+    .muted-cell { color: #6c757d; opacity: 0.65; }
+    /* pequeno destaque nas células de localização mescladas */
+    .loc-cell { background: rgba(0,123,255,0.04); border-right: 1px solid rgba(0,0,0,0.04); }
+  </style>
 </head>
 
 <body>
-  <!-- Cabeçalho -->
   <div class="header">
     <div class="d-flex align-items-center">
       <div class="logo-container"><img src="logo-cbtu.png" alt="Logo CBTU"></div>
@@ -46,7 +40,7 @@
       <button class="btn btn-secondary" onclick="window.location.href='principal.html'">⬅ Voltar</button>
     </div>
 
-    <!-- Formulário de criação (mantido só para POST) -->
+    <!-- Formulário principal -->
     <form id="formExtintor" class="card p-3 mb-4">
       <div class="row g-3">
         <div class="col-md-3">
@@ -72,30 +66,25 @@
       </div>
 
       <div class="row g-3 mt-1">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <label class="form-label">Próx. Recarga</label>
           <input type="date" id="prox_recarga" class="form-control">
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <label class="form-label">Teste Hidrostático</label>
           <input type="date" id="teste" class="form-control">
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Próx. Teste</label>
-          <input type="date" id="prox_teste" class="form-control">
-        </div>
-        <div class="col-md-3 d-flex align-items-end">
+        <div class="col-md-4 d-flex align-items-end">
           <button id="btnSalvar" class="btn btn-success w-100" type="submit">Salvar</button>
         </div>
       </div>
     </form>
 
     <!-- Busca -->
-    <div class="input-group mb-3" style="max-width: 400px;"> <!-- 👈 limita a largura -->
-  <input type="text" id="buscaCilindro" class="form-control" placeholder="Buscar extintor pelo número do cilindro...">
-  <button class="btn btn-primary" onclick="carregarExtintores()">Buscar</button>
-</div>
-
+    <div class="input-group mb-3" style="max-width: 400px;">
+      <input type="text" id="buscaCilindro" class="form-control" placeholder="Buscar extintor pelo número do cilindro...">
+      <button class="btn btn-primary" onclick="carregarExtintores()">Buscar</button>
+    </div>
 
     <!-- Tabela -->
     <div class="table-responsive">
@@ -110,7 +99,6 @@
             <th>Próx. Recarga</th>
             <th>Recarga Vencido</th>
             <th>Teste</th>
-            <th>Próx. Teste</th>
             <th>Teste Vencido</th>
             <th>Ações</th>
           </tr>
@@ -119,10 +107,9 @@
       </table>
     </div>
   </div>
-
-  <!-- 🔹 Modal de edição de Extintor -->
+<!-- Modal Editar -->
 <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered"> <!-- 👈 largura ampliada e centralizado -->
+  <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header bg-warning text-dark">
         <h5 class="modal-title fw-bold">
@@ -135,7 +122,8 @@
         <form id="formEditar">
           <input type="hidden" id="modal_id">
 
-          <div class="row g-3">
+          <!-- Linha 1 -->
+          <div class="row g-3 align-items-end">
             <div class="col-md-4">
               <label class="form-label">Localização</label>
               <input type="text" id="modal_localizacao" class="form-control" required>
@@ -144,21 +132,21 @@
               <label class="form-label">Nº Cilindro</label>
               <input type="text" id="modal_cilindro" class="form-control" required>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
               <label class="form-label">Tipo</label>
               <input type="text" id="modal_tipo" class="form-control">
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
               <label class="form-label">Peso (kg)</label>
               <input type="text" id="modal_peso" class="form-control">
             </div>
-            <div class="col-md-2">
+          </div>
+          <!-- Linha 2 -->
+          <div class="row g-3 mt-3 align-items-end">
+            <div class="col-md-4">
               <label class="form-label">Data da Recarga</label>
               <input type="date" id="modal_recarga" class="form-control">
             </div>
-          </div>
-
-          <div class="row g-3 mt-2">
             <div class="col-md-4">
               <label class="form-label">Próx. Recarga</label>
               <input type="date" id="modal_prox_recarga" class="form-control">
@@ -167,14 +155,9 @@
               <label class="form-label">Teste Hidrostático</label>
               <input type="date" id="modal_teste" class="form-control">
             </div>
-            <div class="col-md-4">
-              <label class="form-label">Próx. Teste</label>
-              <input type="date" id="modal_prox_teste" class="form-control">
-            </div>
           </div>
         </form>
       </div>
-
       <div class="modal-footer d-flex justify-content-between">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           <i class="bi bi-x-circle me-1"></i>Cancelar
@@ -187,7 +170,6 @@
   </div>
 </div>
 
-
   <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -196,7 +178,7 @@
     const token = localStorage.getItem("token");
     document.getElementById("nomeUsuario").textContent = nomeLogado || "Usuário";
 
-    const extMap = new Map(); // guarda itens carregados
+    const extMap = new Map();
     let modalEditarInstance = null;
 
     function parseISODateOnly(value) {
@@ -221,9 +203,7 @@
       if (termo) url += `?busca=${encodeURIComponent(termo)}`;
 
       try {
-        const res = await fetch(url, {
-          headers: { "Authorization": "Bearer " + token }
-        });
+        const res = await fetch(url, { headers: { "Authorization": "Bearer " + token } });
         if (!res.ok) throw new Error("Erro ao buscar extintores: " + res.status);
         const lista = await res.json();
         const tbody = document.getElementById("tabelaExtintores");
@@ -231,53 +211,115 @@
         extMap.clear();
 
         if (!Array.isArray(lista) || lista.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="11" class="text-center text-muted">Nenhum extintor encontrado</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="10" class="text-center text-muted">Nenhum extintor encontrado</td></tr>`;
           return;
         }
 
+        // Agrupar por localização
+        const grupos = {};
         lista.forEach(ext => {
-          extMap.set(Number(ext.idextintor), ext);
-
-          const recargaDate = parseISODateOnly(ext.recarga);
-          const proxRecargaDate = parseISODateOnly(ext.prox_recarga);
-          const testeDate = parseISODateOnly(ext.teste);
-          const proxTesteDate = parseISODateOnly(ext.prox_teste);
-
-          const recargaVencida = proxRecargaDate ? isBeforeToday(proxRecargaDate) : false;
-          const testeVencido = proxTesteDate ? isBeforeToday(proxTesteDate) : false;
-
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${ext.localizacao || ""}</td>
-            <td>${ext.cilindro || ""}</td>
-            <td>${ext.tipo || ""}</td>
-            <td>${ext.peso || ""}</td>
-            <td>${recargaDate ? recargaDate.toLocaleDateString("pt-BR") : ""}</td>
-            <td>${proxRecargaDate ? proxRecargaDate.toLocaleDateString("pt-BR") : ""}</td>
-            <td class="text-center"><span class="badge ${recargaVencida ? 'bg-danger' : 'bg-success'}">${recargaVencida ? 'SIM' : 'NÃO'}</span></td>
-            <td>${testeDate ? testeDate.toLocaleDateString("pt-BR") : ""}</td>
-            <td>${proxTesteDate ? proxTesteDate.toLocaleDateString("pt-BR") : ""}</td>
-            <td class="text-center"><span class="badge ${testeVencido ? 'bg-danger' : 'bg-success'}">${testeVencido ? 'SIM' : 'NÃO'}</span></td>
-            <td class="text-center align-middle" style="display:flex; justify-content:center; align-items:flex-start; gap:6px;">
-  <button class="btn btn-warning btn-sm" data-id="${ext.idextintor}">Editar</button>
-  <button class="btn btn-danger btn-sm" data-id="${ext.idextintor}">Excluir</button>
-</td>
-          `;
-
-          const btnEdit = tr.querySelector("button.btn-warning");
-          const btnDel = tr.querySelector("button.btn-danger");
-          btnEdit.addEventListener("click", () => abrirModalEdicao(Number(btnEdit.dataset.id)));
-          btnDel.addEventListener("click", () => excluirExtintor(Number(btnDel.dataset.id)));
-
-          tbody.appendChild(tr);
+          const loc = ext.localizacao || "Sem localização";
+          if (!grupos[loc]) grupos[loc] = [];
+          grupos[loc].push(ext);
         });
+
+        const localizacoesOrdenadas = Object.keys(grupos).sort((a, b) => a.localeCompare(b));
+        let totalGeral = 0;
+
+        localizacoesOrdenadas.forEach(localizacao => {
+          const itens = grupos[localizacao];
+          totalGeral += itens.length;
+
+          // Ordenar pelo número do cilindro
+          const itensOrdenados = itens.sort((a, b) => {
+            const c1 = a.cilindro?.toString() || "";
+            const c2 = b.cilindro?.toString() || "";
+            return c1.localeCompare(c2, "pt-BR", { numeric: true });
+          });
+
+          // Para cada item do grupo, criamos uma <tr> e as células com createElement
+          itensOrdenados.forEach((ext, index) => {
+            extMap.set(Number(ext.idextintor), ext);
+
+            const recargaDate = parseISODateOnly(ext.recarga);
+            const proxRecargaDate = parseISODateOnly(ext.prox_recarga);
+            const testeDate = parseISODateOnly(ext.teste);
+
+            const recargaVencida = proxRecargaDate ? isBeforeToday(proxRecargaDate) : false;
+            const testeVencido = testeDate ? isBeforeToday(testeDate) : false;
+
+            const tr = document.createElement("tr");
+
+            // Se for o primeiro item do grupo, cria a célula mesclada (rowSpan)
+            if (index === 0) {
+              const tdLoc = document.createElement("td");
+              tdLoc.rowSpan = itensOrdenados.length;
+              tdLoc.className = "fw-bold text-primary align-middle text-center loc-cell";
+              tdLoc.textContent = "📍 " + localizacao;
+              tr.appendChild(tdLoc);
+            }
+
+            // Helper para criar células
+            const mkTd = (content = "", cls = "") => {
+              const td = document.createElement("td");
+              if (cls) td.className = cls;
+              // se content for HTML (badges), usamos innerHTML; caso contrário textContent
+              if (typeof content === "string" && /<\/?[a-z][\s\S]*>/i.test(content)) td.innerHTML = content;
+              else td.textContent = content;
+              return td;
+            };
+
+            tr.appendChild(mkTd(ext.cilindro || ""));
+            tr.appendChild(mkTd(ext.tipo || ""));
+            tr.appendChild(mkTd(ext.peso || ""));
+            tr.appendChild(mkTd(recargaDate ? recargaDate.toLocaleDateString("pt-BR") : ""));
+            tr.appendChild(mkTd(proxRecargaDate ? proxRecargaDate.toLocaleDateString("pt-BR") : ""));
+            tr.appendChild(mkTd(`<span class="badge ${recargaVencida ? "bg-danger" : "bg-success"}">${recargaVencida ? "SIM" : "NÃO"}</span>`, "text-center"));
+            tr.appendChild(mkTd(testeDate ? testeDate.toLocaleDateString("pt-BR") : ""));
+            tr.appendChild(mkTd(`<span class="badge ${testeVencido ? "bg-danger" : "bg-success"}">${testeVencido ? "SIM" : "NÃO"}</span>`, "text-center"));
+
+            // Ações: criar TD, inserir botões e ligar eventos
+            const tdAcoes = document.createElement("td");
+            tdAcoes.className = "text-center";
+
+            const btnEdit = document.createElement("button");
+            btnEdit.type = "button";
+            btnEdit.className = "btn btn-warning btn-sm me-1";
+            btnEdit.dataset.id = ext.idextintor;
+            btnEdit.textContent = "Editar";
+            btnEdit.addEventListener("click", () => abrirModalEdicao(Number(btnEdit.dataset.id)));
+
+            const btnDel = document.createElement("button");
+            btnDel.type = "button";
+            btnDel.className = "btn btn-danger btn-sm";
+            btnDel.dataset.id = ext.idextintor;
+            btnDel.textContent = "Excluir";
+            btnDel.addEventListener("click", () => excluirExtintor(Number(btnDel.dataset.id)));
+
+            tdAcoes.appendChild(btnEdit);
+            tdAcoes.appendChild(btnDel);
+
+            tr.appendChild(tdAcoes);
+
+            tbody.appendChild(tr);
+          });
+        });
+
+        // Rodapé total geral
+        const trTotal = document.createElement("tr");
+        const tdTotal = document.createElement("td");
+        tdTotal.colSpan = 10;
+        tdTotal.className = "table-secondary fw-bold text-center";
+        tdTotal.textContent = `Total geral: ${totalGeral} ${totalGeral === 1 ? "extintor" : "extintores"}`;
+        trTotal.appendChild(tdTotal);
+        tbody.appendChild(trTotal);
+
       } catch (e) {
-        console.error("Erro ao carregar extintores:", e);
-        alert("Erro ao carregar extintores (veja console).");
+        console.error(e);
+        alert("Erro ao carregar extintores.");
       }
     }
 
-    // Abre modal e preenche com dados (só abre modal, não altera o formulário de criação)
     function abrirModalEdicao(id) {
       const ext = extMap.get(Number(id));
       if (!ext) { alert("Extintor não encontrado."); return; }
@@ -290,16 +332,11 @@
       document.getElementById("modal_recarga").value = ext.recarga ? String(ext.recarga).split("T")[0] : "";
       document.getElementById("modal_prox_recarga").value = ext.prox_recarga ? String(ext.prox_recarga).split("T")[0] : "";
       document.getElementById("modal_teste").value = ext.teste ? String(ext.teste).split("T")[0] : "";
-      document.getElementById("modal_prox_teste").value = ext.prox_teste ? String(ext.prox_teste).split("T")[0] : "";
 
-      // cria instância do modal se não existir
-      if (!modalEditarInstance) {
-        modalEditarInstance = new bootstrap.Modal(document.getElementById("modalEditar"), { backdrop: "static" });
-      }
+      if (!modalEditarInstance) modalEditarInstance = new bootstrap.Modal(document.getElementById("modalEditar"), { backdrop: "static" });
       modalEditarInstance.show();
     }
 
-    // Salvar alterações do modal (PUT)
     document.getElementById("btnSalvarModal").addEventListener("click", async () => {
       const id = Number(document.getElementById("modal_id").value);
       const dados = {
@@ -309,33 +346,27 @@
         peso: document.getElementById("modal_peso").value.trim(),
         recarga: document.getElementById("modal_recarga").value || null,
         prox_recarga: document.getElementById("modal_prox_recarga").value || null,
-        teste: document.getElementById("modal_teste").value || null,
-        prox_teste: document.getElementById("modal_prox_teste").value || null
+        teste: document.getElementById("modal_teste").value || null
       };
 
-      if (!dados.localizacao || !dados.cilindro) { alert("Localização e Nº Cilindro são obrigatórios."); return; }
+      if (!dados.localizacao || !dados.cilindro) return alert("Localização e Nº Cilindro são obrigatórios.");
 
       try {
         const res = await fetch(`${API_BASE}/extintor/${id}`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + token
-          },
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
           body: JSON.stringify(dados)
         });
-        if (!res.ok) throw new Error("Falha ao atualizar");
-        // fecha modal e recarrega tabela
+        if (!res.ok) throw new Error("Erro ao atualizar");
         modalEditarInstance.hide();
         carregarExtintores();
-        alert("✅ Alterações salvas com sucesso!");
+        alert("✅ Alterações salvas!");
       } catch (err) {
-        console.error("Erro ao atualizar extintor:", err);
-        alert("Erro ao salvar alterações (veja console).");
+        console.error(err);
+        alert("Erro ao salvar.");
       }
     });
 
-    // Criar novo extintor (POST) - mantém botão Salvar no formulário principal
     document.getElementById("formExtintor").addEventListener("submit", async (e) => {
       e.preventDefault();
       const dados = {
@@ -345,28 +376,24 @@
         peso: document.getElementById("peso").value.trim(),
         recarga: document.getElementById("recarga").value || null,
         prox_recarga: document.getElementById("prox_recarga").value || null,
-        teste: document.getElementById("teste").value || null,
-        prox_teste: document.getElementById("prox_teste").value || null
+        teste: document.getElementById("teste").value || null
       };
 
-      if (!dados.localizacao || !dados.cilindro) { alert("Localização e Nº Cilindro são obrigatórios."); return; }
+      if (!dados.localizacao || !dados.cilindro) return alert("Localização e Nº Cilindro são obrigatórios.");
 
       try {
         const res = await fetch(`${API_BASE}/extintor`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + token
-          },
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
           body: JSON.stringify(dados)
         });
-        if (!res.ok) throw new Error("Falha ao cadastrar");
+        if (!res.ok) throw new Error();
         document.getElementById("formExtintor").reset();
         carregarExtintores();
-        alert("✅ Extintor cadastrado com sucesso!");
+        alert("✅ Extintor cadastrado!");
       } catch (err) {
-        console.error("Erro ao cadastrar extintor:", err);
-        alert("Erro ao cadastrar (veja console).");
+        console.error(err);
+        alert("Erro ao cadastrar.");
       }
     });
 
@@ -377,11 +404,11 @@
           method: "DELETE",
           headers: { "Authorization": "Bearer " + token }
         });
-        if (!res.ok) throw new Error("Erro ao excluir");
+        if (!res.ok) throw new Error();
         carregarExtintores();
       } catch (err) {
-        console.error("Erro ao excluir extintor:", err);
-        alert("Erro ao excluir (veja console).");
+        console.error(err);
+        alert("Erro ao excluir.");
       }
     }
 
