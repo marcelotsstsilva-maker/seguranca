@@ -170,7 +170,7 @@ app.get("/verificar-epis-vencidos", async (req, res) => {
 });
 
 // =====================================================
-// 🟢 Função para manter o Render acordado (das 05h às 00h)
+// 🟢 Função para manter o Render acordado (das 05h às 23h)
 // =====================================================
 const fs = require("fs");
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
@@ -207,16 +207,15 @@ function manterRenderAcordado() {
   setInterval(ping, INTERVAL_MIN * 60 * 1000);
 }
 
-// 🔹 Ativa o keep-alive
-manterRenderAcordado();
-
-
 // ============================
 // 🔹 Inicialização do servidor
 // ============================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Servidor rodando na porta ${PORT}`);
+
+  // 🔹 Ativa o keep-alive APÓS o servidor estar online
+  manterRenderAcordado();
 });
 
 // ============================
@@ -224,5 +223,6 @@ app.listen(PORT, "0.0.0.0", () => {
 // ============================
 require("./cron/verificarEpiVencido");
 require("./cron/verificarEpiVidaUtil");
+
 
 
