@@ -169,43 +169,12 @@ app.get("/verificar-epis-vencidos", async (req, res) => {
   }
 });
 
-// =====================================================
-// 🟢 Função para manter o Render acordado (das 05h às 23h)
-// =====================================================
-const fs = require("fs");
-const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
-
-function manterRenderAcordado() {
-  const PING_URL = "https://backend-loja-p0dy.onrender.com";
-  const INTERVAL_MIN = 10; // minutos
-
-  function horaMaceio() {
-    const agora = new Date().toLocaleTimeString("pt-BR", {
-      timeZone: "America/Maceio",
-      hour12: false,
-    });
-    const [hh] = agora.split(":");
-    return parseInt(hh, 10);
-  }
-
-  async function ping() {
-    const hora = horaMaceio();
-    if (hora >= 5 && hora <= 23) {
-      try {
-        const res = await fetch(PING_URL);
-        console.log(`[${new Date().toISOString()}] ✅ Ping OK (${res.status})`);
-      } catch (err) {
-        console.error(`[${new Date().toISOString()}] ❌ Erro no ping: ${err.message}`);
-      }
-    } else {
-      console.log(`[${new Date().toISOString()}] ⏸️ Fora do horário (${hora}h) — sem ping`);
-    }
-  }
-
-  // executa o primeiro ping e repete a cada 10 minutos
-  ping();
-  setInterval(ping, INTERVAL_MIN * 60 * 1000);
-}
+// ============================
+// 🔹 Rota leve para manter o Render acordado
+// ============================
+app.get("/wake", (req, res) => {
+  res.status(200).send("alive");
+});
 
 // ============================
 // 🔹 Inicialização do servidor
@@ -214,10 +183,15 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Servidor rodando na porta ${PORT}`);
 
-  // 🔹 Ativa o keep-alive APÓS o servidor estar online
-  manterRenderAcordado();
-});
-
+  // ============================
+  // 🔄 Mantém o Render acordado
+  // ============================
+  setInterval(() => {
+    fetch("https://sisprest.onrender.com/wake")
+      .then(() => console.log("🔄 Ping para manter o Render acordado..."))
+      .catch(() => console.log("⚠ Falha ao pingar o servidor Render."));
+  }, 1000 * 60 * 5); // executa a cada 5 minutos (recomendado)
+  
 // ============================
 // 🔹 Cron automático
 // ============================
