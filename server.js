@@ -170,28 +170,13 @@ app.get("/verificar-epis-vencidos", async (req, res) => {
 });
 
 // ============================
-// 🔹 Rota leve para manter o Render acordado
-// ============================
-app.get("/wake", (req, res) => {
-  res.status(200).send("alive");
-});
-
-// ============================
 // 🔹 Inicialização do servidor
 // ============================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Servidor rodando na porta ${PORT}`);
 
-  // ============================
-  // 🔄 Mantém o Render acordado
-  // ============================
-  setInterval(() => {
-    fetch("https://sisprest.onrender.com/wake")
-      .then(() => console.log("🔄 Ping para manter o Render acordado..."))
-      .catch(() => console.log("⚠ Falha ao pingar o servidor Render."));
-  }, 1000 * 60 * 5); // executa a cada 5 minutos (recomendado)
-  
+ 
 // ============================
 // 🔹 Cron automático
 // ============================
