@@ -32,6 +32,7 @@ const epiFuncionarioRoutes = require("./routes/epiFuncionarioRoutes");
 const relatorioEpiRoutes = require("./routes/relatorioEpiRoutes");
 const relatorioEpiFuncionarioRoutes = require("./routes/relatorioEpiFuncionarioRoutes");
 const extintorRoutes = require("./routes/extintorRoutes");
+const relatorioExtintoresRoutes = require("./routes/relatorioExtintoresRoutes");
 
 
 const app = express();
@@ -154,6 +155,7 @@ app.use("/epi_funcionario", epiFuncionarioRoutes);
 app.use("/", relatorioEpiRoutes);
 app.use("/", relatorioEpiFuncionarioRoutes);
 app.use("/", extintorRoutes);
+app.use(relatorioExtintoresRoutes);
 
 
 // ============================
