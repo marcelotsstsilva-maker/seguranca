@@ -184,6 +184,7 @@ app.listen(PORT, "0.0.0.0", () => {
 // ============================
 require("./cron/verificarEpiVencido");
 require("./cron/verificarEpiVidaUtil");
+require("./cron/verificarExtintores"); // 🔹 Adicionado disparo mensal de extintores
 
 
 
